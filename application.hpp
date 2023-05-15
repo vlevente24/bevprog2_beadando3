@@ -15,7 +15,7 @@ public:
     Application(genv::color background_color, int width, int height);
     void event_loop();
     void register_widget(Widget*);
-    virtual void action(std::string) = 0;
+    virtual void action(genv::event) = 0;
     genv::color get_color();
 };
 

@@ -19,14 +19,7 @@ void Application::event_loop() {
                 }
             }
         }
-        if (ev.type == ev_key) {
-            if (ev.keycode == key_enter) {
-                action("enter");
-            }
-            if (ev.keycode == key_space) {
-                action("space");
-            }
-        }
+        action(ev);
         if (focus != -1) {
             _widgets[focus]->handle(ev);
         }
@@ -45,5 +38,5 @@ void Application::register_widget(Widget * w) {
 }
 
 genv::color Application::get_color() {
-        return _bckgrnd_clr;
+    return _bckgrnd_clr;
 }

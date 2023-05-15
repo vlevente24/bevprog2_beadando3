@@ -65,6 +65,6 @@ void TextInput::reset() {
     gin.timer(_cursor_wait);
 }
 
-string TextInput::get_text() const {
+string TextInput::getText() const {
     return _text;
 }

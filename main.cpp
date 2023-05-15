@@ -11,7 +11,7 @@ public:
         printBackground();
         gout << genv::refresh;
     }
-    void action(std::string) override {}
+    void action(event ev) override {}
     void printBackground() {
         gout << move_to(0, 0) << _bckgrnd_clr << box(_window_width, _window_height)
              << move_to(10, 10) << color(0, 0, 0) << box(_window_width - 20, _window_height - 20);

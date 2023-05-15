@@ -5,26 +5,8 @@
 using namespace genv;
 using namespace std;
 
-List::List(Application * app, int x, int y, int w, int h, int myd, vector<string> v) : Widget(app, x, y, w, h), _value(""), _y_down_max(myd), _y_down(0), _sv(v), _index(v.size()), _shift(0) {
-    _v = vector<canvas*>(v.size() + 1);
-    //gout.load_font("/Users/levente/Desktop/ITK_graphicslib-master/LiberationSans-Regular.ttf", 15);
-    for (size_t i = 0; i < v.size(); i++) {
-        _v[i] = new canvas(w, v.size() * (gout.cascent() + gout.cdescent() + 10));
-        * _v[i] << color(134, 134, 134) << box(w, v.size() * (gout.cascent() + gout.cdescent() + 10)) << move_to(1, 0) << color(255, 255, 255) << box(w - 2, v.size() * (gout.cascent() + gout.cdescent() + 10));
-        for (size_t j = 0; j < v.size(); j++) {
-            if (j == i) {
-                * _v[i] << move_to(1, j * (gout.cascent() + gout.cdescent() + 10)) << color(0, 120, 215) << box(w - 2, gout.cascent() + gout.cdescent() + 10) << move_to(5, j * (gout.cascent() + gout.cdescent() + 10) + 5 + gout.cascent()) << color(255, 255, 255) << text(v[i]);
-            }
-            else {
-                * _v[i] << move_to(5, j * (gout.cascent() + gout.cdescent() + 10) + 5 + gout.cascent()) << color(0, 0, 0) << text(v[j]);
-            }
-        }
-    }
-    _v[v.size()] = new canvas(w, v.size() * (gout.cascent() + gout.cdescent() + 10));
-    * _v[v.size()] << color(134, 134, 134) << box(w, v.size() * (gout.cascent() + gout.cdescent() + 10)) << move_to(1, 0) << color(255, 255, 255) << box(w - 2, v.size() * (gout.cascent() + gout.cdescent() + 10));
-    for (size_t j = 0; j < v.size(); j++) {
-        * _v[v.size()] << move_to(5, j * (gout.cascent() + gout.cdescent() + 10) + 5 + gout.cascent()) << color(0, 0, 0) << text(v[j]);
-    }
+List::List(Application * app, int x, int y, int w, int h, int myd, vector<string> items) : Widget(app, x, y, w, h), _value(""), _y_down_max(myd), _y_down(0), _sv(items), _index(items.size()), _shift(0), _valuei(-1) {
+    update(items);
 }
 List::~List() {
     for (size_t i = 0; i < _v.size(); i++) {
@@ -47,7 +29,7 @@ void List::print_btn(bool down) {
     if (down) {
         gout << move_to(_xpos + _width - 1 - button_w * 0.5, _ypos + 1 + button_h * 2 / 5) << line_to(_xpos + _width - 1 - button_w * 0.3, _ypos + 1 + button_h * 3 / 5) << move_to(_xpos + _width - 1 - button_w * 0.5, _ypos + 1 + button_h * 2 / 5) << line_to(_xpos + _width - 1 - button_w * 0.7, _ypos + 1 + button_h * 3 / 5);
     }
-    else {       
+    else {
         gout << move_to(_xpos + _width - 1 - button_w * 0.5, _ypos + 1 + button_h * 3 / 5) << line_to(_xpos + _width - 1 - button_w * 0.3, _ypos + 1 + button_h * 2 / 5) << move_to(_xpos + _width - 1 - button_w * 0.5, _ypos + 1 + button_h * 3 / 5) << line_to(_xpos + _width - 1 - button_w * 0.7, _ypos + 1 + button_h * 2 / 5);
     }
 }
@@ -78,6 +60,7 @@ void List::handle(event ev) {
             else if (ev.pos_x >= _xpos and ev.pos_x < _xpos + _width and ev.pos_y >= _ypos + _height and ev.pos_y < _ypos + _height + _y_down and _y_down > 0) {
                 if (_index < _sv.size()) {
                     _value = _sv[_index];
+                    _valuei = _index;
                 }
                 reset();
             }
@@ -116,11 +99,42 @@ bool List::is_selected(int x, int y) {
 void List::reset() {
     gout << move_to(_xpos, _ypos + _height) << _parent->get_color() << box(_width, _y_down);
     _y_down = 0;
-    _index = _v.size() - 1;
+    //_index = _v.size() - 1;
+    _index = _sv.size();
     _shift = 0;
     print_btn(false);
 }
 
-string List::get_value() {
+string List::getValue() const {
     return _value;
+}
+
+int List::getSelected() const {
+    return _valuei;
+}
+
+void List::update(vector<string> items) { // itt még van dolog, hogy csak ezt a fgvt meg lehessen constructorból hívni
+    for (size_t i = 0; i < _v.size(); i++) {delete _v[i];}
+    _sv = items;
+    _v = vector<canvas*>(_sv.size() + 1);
+    for (size_t i = 0; i < _sv.size(); i++) {
+        _v[i] = new canvas(_width, _sv.size() * (gout.cascent() + gout.cdescent() + 10));
+        * _v[i] << color(134, 134, 134) << box(_width, _sv.size() * (gout.cascent() + gout.cdescent() + 10)) << move_to(1, 0) << color(255, 255, 255) << box(_width - 2, _sv.size() * (gout.cascent() + gout.cdescent() + 10));
+        for (size_t j = 0; j < _sv.size(); j++) {
+            if (j == i) {
+                * _v[i] << move_to(1, j * (gout.cascent() + gout.cdescent() + 10)) << color(0, 120, 215) << box(_width - 2, gout.cascent() + gout.cdescent() + 10) << move_to(5, j * (gout.cascent() + gout.cdescent() + 10) + 5 + gout.cascent()) << color(255, 255, 255) << text(_sv[i]);
+            }
+            else {
+                * _v[i] << move_to(5, j * (gout.cascent() + gout.cdescent() + 10) + 5 + gout.cascent()) << color(0, 0, 0) << text(_sv[j]);
+            }
+        }
+    }
+    _v[_sv.size()] = new canvas(_width, _sv.size() * (gout.cascent() + gout.cdescent() + 10));
+    * _v[_sv.size()] << color(134, 134, 134) << box(_width, _sv.size() * (gout.cascent() + gout.cdescent() + 10)) << move_to(1, 0) << color(255, 255, 255) << box(_width - 2, _sv.size() * (gout.cascent() + gout.cdescent() + 10));
+    for (size_t j = 0; j < _sv.size(); j++) {
+        * _v[_sv.size()] << move_to(5, j * (gout.cascent() + gout.cdescent() + 10) + 5 + gout.cascent()) << color(0, 0, 0) << text(_sv[j]);
+    }
+    _value = "";
+    _valuei = -1;
+    _index = _sv.size();
 }

@@ -15,7 +15,7 @@ public:
     virtual void print(bool marked) override;
     virtual void handle(genv::event ev) override;
     virtual void reset() override;
-    std::string get_text() const;
+    std::string getText() const;
 };
 
 #endif
