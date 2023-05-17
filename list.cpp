@@ -14,7 +14,7 @@ List::~List() {
     }
 }
 
-void List::print(bool marked) {
+void List::print(bool marked) const {
     gout << (marked ? color(20, 131, 218) : color(134, 134, 134));
     gout << move_to(_xpos, _ypos) << box(_width, _height) << move_to(_xpos + 2, _ypos + 2) << color(255, 255, 255) << box(_width - 4, _height - 4);
     gout << move_to(_xpos + 2 + 3, _ypos + 2 + 3) << color(0, 0, 0) << text(_value);
@@ -22,7 +22,7 @@ void List::print(bool marked) {
     if (_y_down > 0) {print_box();}
 }
 
-void List::print_btn(bool down) {
+void List::print_btn(bool down) const {
     int button_w = (_height * 0.85 - 2), button_h = (_height - 2);
     gout << move_to(_xpos + _width - 1 - button_w, _ypos + 1) << (down ? color(18, 97, 161) : color(110, 110, 110)) << box(button_w, button_h) << move_to(_xpos + _width - button_w, _ypos + 2) << (down ? color(203, 228, 247) : color(240, 240, 240)) << box(button_w - 2, button_h - 2);
     gout << color(60, 60, 60);
@@ -34,7 +34,7 @@ void List::print_btn(bool down) {
     }
 }
 
-void List::print_box() {
+void List::print_box() const {
     gout << move_to(_xpos, _ypos + _height) << color(0, 0, 0) << line(_width, 0);
     gout << stamp(*_v[_index], 0, _shift, _width, _y_down - 2, _xpos, _ypos + _height + 1);
     gout << move_to(_xpos, _ypos + _height + _y_down - 1) << color(0, 0, 0) << line(_width, 0);

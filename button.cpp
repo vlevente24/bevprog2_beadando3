@@ -3,11 +3,15 @@
 using namespace genv;
 using namespace std;
 
-Button::Button(Application * app, int x, int y, int w, int h, string text, function<void()> f) : Widget(app, x, y, w, h), _text(text), _f(f) {}
+Button::Button(Application * app, int x, int y, int w, int h, string text, function<void()> f,
+               std::string fontfile, unsigned short fontsize, color bclr, color tclr) : Widget(app, x, y, w, h), _text(text), _f(f),
+               _fontfile(fontfile), _fontsize(fontsize), backgroundColor(bclr), textColor(tclr) {}
 
-void Button::print(bool) { // legyen const majd
-    gout << move_to(_xpos, _ypos) << color(200, 200, 200) << box(_width, _height)
-         << move_to(_xpos + _width / 2 - gout.twidth(_text) / 2, _ypos + _height / 2) << color(0, 0, 0) << text(_text);
+void Button::print(bool) const {
+    gout.load_font(_fontfile, _fontsize);
+    gout << move_to(_xpos, _ypos) << backgroundColor << box(_width, _height)
+         << move_to(_xpos + _width / 2 - gout.twidth(_text) / 2, _ypos + (_height - gout.cascent() - gout.cdescent()) / 2 )
+         << textColor << text(_text);
 }
 
 void Button::handle(genv::event ev) {

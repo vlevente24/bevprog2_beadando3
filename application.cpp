@@ -6,30 +6,8 @@ Application::Application(genv::color background_color, int width, int height) : 
 
 void Application::event_loop() {
     event ev;
-    int focus = -1;
     while (gin >> ev and ev.keycode != key_escape) {
-        if (ev.type == ev_mouse and ev.button == btn_left) {
-            if (!(focus != -1 and _widgets[focus]->is_selected(ev.pos_x, ev.pos_y))) {
-                if (focus != -1) {_widgets[focus]->reset();}
-                focus = -1;
-                for (size_t i = 0; i < _widgets.size(); i++) {
-                    if (_widgets[i]->is_selected(ev.pos_x, ev.pos_y)) {
-                        focus = i;
-                    }
-                }
-            }
-        }
         action(ev);
-        if (focus != -1) {
-            _widgets[focus]->handle(ev);
-        }
-        for (Widget * w : _widgets) {
-            w->print(false);
-        }
-        if (focus != -1) {
-            _widgets[focus]->print(true);
-        }
-        gout << refresh;
     }
 }
 
@@ -39,4 +17,8 @@ void Application::register_widget(Widget * w) {
 
 genv::color Application::get_color() {
     return _bckgrnd_clr;
+}
+
+void Application::clearWindow() {
+    gout << _bckgrnd_clr << move_to(0, 0) << box(_window_width, _window_height);
 }

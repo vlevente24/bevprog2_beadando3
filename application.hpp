@@ -17,6 +17,7 @@ public:
     void register_widget(Widget*);
     virtual void action(genv::event) = 0;
     genv::color get_color();
+    void clearWindow();
 };
 
 #endif

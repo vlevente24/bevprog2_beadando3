@@ -13,7 +13,7 @@ public:
     Widget(Application * app, int x, int y, int w, int h);
     virtual ~Widget() = default;
     virtual bool is_selected(int, int);
-    virtual void print(bool) = 0;
+    virtual void print(bool) const = 0;
     virtual void handle(genv::event) = 0;
     virtual void reset() = 0;
 };

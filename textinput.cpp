@@ -10,7 +10,7 @@ using namespace std;
 
 TextInput::TextInput(Application * app, int x, int y, int sx, int sy) : Widget(app, x, y, sx, sy), _text(""), _cursor_pos(0), _utf8_pos(utf8_character_index(_text)), _cursor_wait(0), _cursor_state(true) {}
 
-void TextInput::print(bool marked) {
+void TextInput::print(bool marked) const {
     gout << (marked ? color(20, 131, 218) : color(134, 134, 134));
     gout << move_to(_xpos, _ypos) << box(_width, _height) << move_to(_xpos + 2, _ypos + 2) << color(255, 255, 255) << box(_width - 4, _height - 4);
     gout << move_to(_xpos + 5, _ypos + 5) << color(0, 0, 0) << text(_text);;

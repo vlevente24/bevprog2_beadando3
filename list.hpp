@@ -13,13 +13,13 @@ class List : public Widget {
     vector<genv::canvas*> _v;
     string _value;
     int _y_down_max, _y_down, _index, _shift, _valuei;
-    void print_btn(bool);
-    void print_box();
+    void print_btn(bool) const;
+    void print_box() const;
     int calc_index(int);
 public:
     List(Application*, int x, int y, int w, int h, int max_y_down, vector<string> items);
     ~List();
-    void print(bool) override;
+    void print(bool) const override;
     void handle(genv::event) override;
     void reset() override;
     bool is_selected(int, int) override;

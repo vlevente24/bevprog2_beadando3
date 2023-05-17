@@ -12,7 +12,7 @@ protected:
     std::vector<int> _utf8_pos;
 public:
     TextInput(Application*, int x, int y, int w, int h);
-    virtual void print(bool marked) override;
+    virtual void print(bool marked) const override;
     virtual void handle(genv::event ev) override;
     virtual void reset() override;
     std::string getText() const;
