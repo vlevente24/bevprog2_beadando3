@@ -1,4 +1,3 @@
-#include "/Users/levente/Desktop/ITK_graphicslib-master/graphics.hpp"
 #include "widgets.hpp"
 
 using namespace genv;
