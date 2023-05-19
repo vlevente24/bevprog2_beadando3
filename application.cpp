@@ -2,7 +2,8 @@
 #include "widgets.hpp"
 using namespace genv;
 
-Application::Application(genv::color background_color, int width, int height) : _bckgrnd_clr(background_color), _window_width(width), _window_height(height) {}
+Application::Application(genv::color background_color, int width, int height) : _bckgrnd_clr(background_color),
+                        _window_width(width), _window_height(height) {}
 
 void Application::event_loop() {
     event ev;
@@ -21,4 +22,12 @@ genv::color Application::get_color() {
 
 void Application::clearWindow() {
     gout << _bckgrnd_clr << move_to(0, 0) << box(_window_width, _window_height);
+}
+
+int Application::getWidth() {
+    return _window_width;
+}
+
+int Application::getHeight() {
+    return _window_height;
 }

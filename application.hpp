@@ -18,6 +18,8 @@ public:
     virtual void action(genv::event) = 0;
     genv::color get_color();
     void clearWindow();
+    int getWidth();
+    int getHeight();
 };
 
 #endif

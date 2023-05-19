@@ -3,9 +3,16 @@
 
 // coordinating the whole game, without drawing
 
+#include <functional>
+#include "field.hpp"
+#include "bomb.hpp"
+
 class GameMaster {
+    int * status;
+    std::function<void(int, int)> _f;
 public:
-    GameMaster();
+    GameMaster(int * st, std::function<void(int, int)> f);
+    void fieldClick(int x, int y);
 };
 
 
