@@ -3,10 +3,9 @@
 using namespace genv;
 using namespace std;
 
-PlayField::PlayField(Application * app, int x, int y, int w, int h, vector<Widget*> vw, function<void()> drwBckgrnd, function<void()> f):
-                    Widget(app, x, y, w, h), _things(vw), _drawBackground(drwBckgrnd), _f(f), _focus(-1), focusChange(false) {
-
-}
+PlayField::PlayField(Application * app, int x, int y, int w, int h, vector<Widget*> vw, function<void()> drwBckgrnd, function<void()> f,
+                     function<void()> set, std::function<void()> reset) : Widget(app, x, y, w, h), _things(vw),
+                     _drawBackground(drwBckgrnd), _handle(f), _set(set), _reset(reset), _focus(-1), focusChange(false) {}
 
 bool PlayField::is_selected(int, int) {
     return false;
@@ -38,13 +37,14 @@ void PlayField::handle(genv::event ev) {
     if (_focus != -1) {
         _things[_focus]->handle(ev);
     }
-    _f();
+    _handle();
     print(true);
     gout << refresh;
 }
 
 void PlayField::reset() {
     _parent->clearWindow();
+    _reset();
 }
 
 void PlayField::changeFocus() {
@@ -58,4 +58,8 @@ void PlayField::changeFocus() {
         }
     }
     gin.timer(1);
+}
+
+void PlayField::set() {
+    _set();
 }

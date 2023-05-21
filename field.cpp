@@ -4,10 +4,8 @@
 using namespace genv;
 using namespace std;
 
-Field::Field(Application *app, int x, int y, int w, canvas *norm, canvas *inc, canvas *corr, bool ship, function<void(int, int)> f) :
-             Widget(app, x, y, w, w), _normal(norm), _incorrect(inc), _correct(corr), _isShip(ship), _hit(false), _f(f) {
-
-}
+Field::Field(Application *app, int x, int y, int w, canvas *norm, canvas *inc, canvas *corr, function<void(int, int)> f) :
+             Widget(app, x, y, w, w), _normal(norm), _incorrect(inc), _correct(corr), _isShip(false), _hit(false), _f(f) {}
 
 void Field::reset() {}
 
@@ -37,10 +35,15 @@ void Field::setHit() {
     _hit = true;
 }
 
-bool Field::isShip() {
+bool Field::isShip() const {
     return _isShip;
 }
 
 int Field::getWidth() {
     return _width;
+}
+
+void Field::setShip(bool b, Ship * sh) {
+    _isShip = b;
+    _ship = sh;
 }
