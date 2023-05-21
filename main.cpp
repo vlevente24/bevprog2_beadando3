@@ -17,6 +17,7 @@ const color white(255, 255, 255);
 const color black(0, 0, 0);
 const color green(0, 255, 0);
 const color red(255, 0, 0);
+const color blue(0, 0, 255);
 const color lblue(130, 255, 255);
 
 class Torpedo : public Application {
@@ -55,6 +56,18 @@ public:
         {
             _nfld = new canvas(40, 40);
             *_nfld << move_to(0,0) << white << box(40, 40) << move_to(1,1) << lblue << box(38, 38);
+            _cfld = new canvas(40, 40);
+            *_cfld << move_to(0,0) << white << box(40, 40) << move_to(1,1) << lblue << box(38, 38);
+            for (int i = 0; i < 40; i++) {
+                for (int j = 0; j < 40; j++) {
+                    if ((i - 20) * (i - 20) + (j - 20) * (j - 20) <= 100) {
+                        *_cfld << move_to(i, j) << red << dot;
+                    }
+                }
+            }
+            _icfld = new canvas(40, 40);
+            *_icfld << move_to(0,0) << white << box(40, 40) << move_to(1,1) << lblue << box(38, 38)
+                    << move_to(5, 5) << blue << line_to(35, 35) << move_to(35, 5) << line_to(5, 35);
         }
 
         // welcome window
@@ -76,6 +89,7 @@ public:
                                            << box(_window_width, _window_height);}, [](){}, [](){},
                                            [](){}));
         }
+
         // 1st player options window
         {
             gout.load_font(fontFileName, 15);
@@ -97,10 +111,10 @@ public:
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 5 - i; j++) {
                     _plr1s[ii] = new Ship(this, _window_width / 2 + 40 + j * (i + 1) * 40, 300 + i * 40, i + 1,
-                                          [=](bool b, int x, int y, int s){
-                        return this->canPlace(b, x, y, s);
-                    }, [=](Ship*s, int x, int y){
-                        this->placeShip(s, x, y);
+                                          [=](bool b, int x, int y, int s, int d){
+                        return this->canPlace(b, x, y, s, d);
+                    }, [=](Ship*s, bool b){
+                        this->placeShip(s, b);
                     });
                     v2menu.push_back(_plr1s[ii]);
                     ii++;
@@ -162,10 +176,10 @@ public:
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 5 - i; j++) {
                     _plr2s[ii] = new Ship(this, 40 + j * (i + 1) * 40, 300 + i * 40, i + 1,
-                                          [=](bool b, int x, int y, int s){
-                        return this->canPlace(b, x, y, s);
-                    }, [=](Ship*s, int x, int y){
-                        this->placeShip(s, x, y);
+                                          [=](bool b, int x, int y, int s, int d){
+                        return this->canPlace(b, x, y, s, d);
+                    }, [=](Ship*s, bool b){
+                        this->placeShip(s, b);
                     });
                     v3menu.push_back(_plr2s[ii]);
                     ii++;
@@ -236,61 +250,91 @@ public:
     void changeFocus() {
         _menus[*_status]->changeFocus();
     }
-    bool canPlace(bool hor, int x, int y, int s) {
-        bool b;
+    bool canPlace(bool hor, unsigned int x, unsigned int y, int s, int d) {
+        bool b = true;
         if (*_status == 1) {
-            b = (x >= 30) and (x < 430) and (y >= 110) and (y < 510);
-                if (!b) {return false;}
-
-            int x0 = (x - 30) / 40, y0 = (y - 110) / 40;
             if (hor) {
-                for (int i = 0; i < s; i++) {
-                    b = b and !(_plr1f[x0][y0 + i]->isShip());
-                }
-            } else {
+                int x0 = ((x - 30) / 40) - d, y0 = ((y - 110) / 40);
+                if ((x0 + s > 10) or (x0 < 0) or (y0 < 0) or (y0 > 9)) {return false;}
                 for (int i = 0; i < s; i++) {
                     b = b and !(_plr1f[x0 + i][y0]->isShip());
                 }
-            }
-            return b;
-        } else if (*_status == 2) {
-            b = (x >= _window_width - 430) and (x < _window_width - 30) and (y >= 110) and (y < 510);
-                if (!b) {return false;}
-
-            int x0 = (x + 430 - _window_width) / 40, y0 = (y - 110) / 40;
-            if (hor) {
-                for (int i = 0; i < s; i++) {
-                    b = b and !(_plr2f[x0][y0 + i]->isShip());
-                }
+                return b;
             } else {
+                int x0 = ((x - 30) / 40), y0 = ((y - 110) / 40) - d;
+                if ((x0 > 9) or (x0 < 0) or (y0 < 0) or (y0 + s > 10)) {return false;}
+                for (int i = 0; i < s; i++) {
+                    b = b and !(_plr1f[x0][y0 + i]->isShip());
+                }
+                return b;
+            }
+        } else if (*_status == 2) {
+            if (hor) {
+                int x0 = ((x + 430 - _window_width) / 40) - d, y0 = ((y - 110) / 40);
+                if ((x0 + s > 10) or (x0 < 0) or (y0 < 0) or (y0 > 9)) {return false;}
                 for (int i = 0; i < s; i++) {
                     b = b and !(_plr2f[x0 + i][y0]->isShip());
                 }
+                return b;
+            } else {
+                int x0 = (x + 430 - _window_width) / 40, y0 = ((y - 110) / 40) - d;
+                if ((x0 > 9) or (x0 < 0) or (y0 < 0) or (y0 + s > 10)) {return false;}
+                for (int i = 0; i < s; i++) {
+                    b = b and !(_plr2f[x0][y0 + i]->isShip());
+                }
+                return b;
             }
-            return b;
         }
+        return false;
     }
-    void placeShip(Ship *sh, int x, int y) {
-        if (*_status == 1 and (x >= 30) and (x < 430) and (y >= 110) and (y < 510)) {
-            int x0 = (x - 30) / 40, y0 = (y - 110) / 40;
-            if (sh->getHorizontal()) {
-                for (int i = 0; i < sh->getShipSize(); i++) {
-                    _plr1f[x0][y0 + i]->setShip(true, sh);
+    void placeShip(Ship *sh, bool del) {
+        if (!del) {
+            int x = sh->getPosX(), y = sh->getPosY();
+            if (*_status == 1) {
+                int x0 = (x - 30) / 40, y0 = (y - 110) / 40;
+                if (sh->getHorizontal()) {
+                    for (int i = 0; i < sh->getShipSize(); i++) {
+                        _plr1f[x0 + i][y0]->setShip(true, sh);
+                    }
+                } else {
+                    for (int i = 0; i < sh->getShipSize(); i++) {
+                        _plr1f[x0][y0 + i]->setShip(true, sh);
+                    }
                 }
-            } else {
-                for (int i = 0; i < sh->getShipSize(); i++) {
-                    _plr1f[x0 + i][y0]->setShip(true, sh);
+            } else if (*_status == 2) {
+                int x0 = (x + 430 - _window_width) / 40, y0 = (y - 110) / 40;
+                if (sh->getHorizontal()) {
+                    for (int i = 0; i < sh->getShipSize(); i++) {
+                        _plr2f[x0 + i][y0]->setShip(true, sh);
+                    }
+                } else {
+                    for (int i = 0; i < sh->getShipSize(); i++) {
+                        _plr2f[x0][y0 + i]->setShip(true, sh);
+                    }
                 }
             }
-        } else if (*_status == 2 and (x >= _window_width - 430) and (x < _window_width - 30) and (y >= 110) and (y < 510)) {
-            int x0 = (x + 430 - _window_width) / 40, y0 = (y - 110) / 40;
-            if (sh->getHorizontal()) {
-                for (int i = 0; i < sh->getShipSize(); i++) {
-                    _plr1f[x0][y0 + i]->setShip(true, sh);
+        } else if (del and sh->getMx() != -1 and sh->getMy() != -1) {
+            if (*_status == 1) {
+                if (sh->getHorizontal()) {
+                    for (int i = 0; i < sh->getShipSize(); i++) {
+                        _plr1f[sh->getMx() + i][sh->getMy()]->setShip(false, 0);
+                    }
+                } else {
+                    for (int i = 0; i < sh->getShipSize(); i++) {
+                        _plr1f[sh->getMx()][sh->getMy() + i]->setShip(false, 0);
+                    }
                 }
-            } else {
-                for (int i = 0; i < sh->getShipSize(); i++) {
-                    _plr1f[x0 + i][y0]->setShip(true, sh);
+            }
+            else if (*_status == 2) {
+                if (sh->getHorizontal()) {
+                    for (int i = 0; i < sh->getShipSize(); i++) {
+                        _plr2f[sh->getMx() + i][sh->getMy()]->setShip(false, 0);
+                    }
+
+                } else {
+                    for (int i = 0; i < sh->getShipSize(); i++) {
+                        _plr2f[sh->getMx()][sh->getMy() + i]->setShip(false, 0);
+                    }
                 }
             }
         }
