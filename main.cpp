@@ -1,3 +1,4 @@
+#include <sstream>
 #include "application.hpp"
 #include "widgets.hpp"
 #include "playfield.hpp"
@@ -378,9 +379,20 @@ public:
             v4menu.push_back(_bomb);
             _menus.push_back(new PlayField(this, 0, 0, _window_width, _window_height, v4menu,
                                            [=](){
+                int count1 = 0, count2 = 0;
+                for (int i = 0; i < 15; i++) {
+                    count1 += _plr1s[i]->getShot();
+                    count2 += _plr2s[i]->getShot();
+                }
+                stringstream ss1, ss2;
+                ss1 << "Ships: " << count1 << " / 35";
+                ss2 << "Ships: " << count2 << " / 35";
+                gout.load_font(fontFileName, 20);
                 gout << move_to(0, 0) << _bckgrnd_clr << box(_window_width, _window_height)
                      << move_to(20, 100) << color(255, 255, 220) << box(_window_width - 40, 420)
-                     << move_to(_window_width / 2, 100) << black << line(0, 420);
+                     << move_to(_window_width / 2, 100) << black << line(0, 420)
+                     << move_to(20, 20) << black << text(ss1.str())
+                     << move_to(_window_width - 20 - gout.twidth(ss2.str()), 20) << text(ss2.str());
                 }, [](){}, [=](){
                         for (int i = 0; i < 10; i++) {
                             for (int j = 0; j < 10; j++) {

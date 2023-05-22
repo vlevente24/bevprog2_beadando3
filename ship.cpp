@@ -190,3 +190,7 @@ void Ship::absReset() {
     _lock = false;
     _shots = 0;
 }
+
+int Ship::getShot() {
+    return _shots;
+}

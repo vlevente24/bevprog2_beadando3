@@ -25,6 +25,7 @@ public:
     int getPosY();
     int getMx();
     int getMy();
+    int getShot();
     bool isDead();
     void hit();
     void absReset();
