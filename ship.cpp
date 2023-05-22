@@ -4,7 +4,8 @@ using namespace genv;
 
 Ship::Ship(Application *app, int x, int y, int ships, std::function<bool(bool,int,int,int,int)> cp,
            std::function<void(Ship*,bool)> ps) : Widget(app, x, y,ships * 40 - 20, 20), _ssize(ships), _horizontal(true),
-           _visible(false), _static(true), _follow(false), _x0(x), _y0(y), canPlace(cp), placeShip(ps), _mx(-1), _my(-1) {}
+           _visible(false), _static(true), _follow(false), _x0(x), _y0(y), canPlace(cp), placeShip(ps), _mx(-1), _my(-1), _lock(false),
+           _shots(0) {}
 
 void Ship::print(bool) const {
     if (_visible) {
@@ -24,6 +25,7 @@ void Ship::handle(genv::event ev) {
         }
         if (ev.button == 0) {
             if (_follow and !_static and _visible) {
+                _lock = false;
                 if (canPlace(_horizontal, ev.pos_x, ev.pos_y, _ssize, calculateD())) {
                     if (_x0 < _parent->getWidth() / 2) {
                         if (_horizontal) {
@@ -63,7 +65,7 @@ void Ship::handle(genv::event ev) {
         }
         if (ev.button == -btn_left) {
             if (_follow and !_static and _visible) {
-                if (canPlace(_horizontal, ev.pos_x, ev.pos_y, _ssize, calculateD())) {
+                if (!_lock and canPlace(_horizontal, ev.pos_x, ev.pos_y, _ssize, calculateD())) {
                     placeShip(this, false);
                     _my = (_ypos - 110) / 40;
                     if (_x0 < _parent->getWidth() / 2) {
@@ -73,6 +75,7 @@ void Ship::handle(genv::event ev) {
                     }
                 }
                 else {
+                    _lock = false;
                     _mx = _my = -1;
                     _xpos = _x0;
                     _ypos = _y0;
@@ -90,6 +93,7 @@ void Ship::handle(genv::event ev) {
     }
     if (_follow and !_static and _visible and ev.type == ev_key and ev.keycode == 'r') {
         _horizontal = !_horizontal;
+        _lock = true;
         int tmp = _width;
         _width = _height;
         _height = tmp;
@@ -164,4 +168,25 @@ int Ship::getMx() {
 
 int Ship::getMy() {
     return _my;
+}
+
+bool Ship::isDead() {
+    return _shots >= _ssize;
+}
+
+void Ship::hit() {
+    _shots++;
+}
+
+void Ship::absReset() {
+    _horizontal = true;
+    _visible = false;
+    _static = true;
+    _follow = false;
+    _xpos = _x0;
+    _ypos = _y0;
+    _mx = -1;
+    _my = -1;
+    _lock = false;
+    _shots = 0;
 }

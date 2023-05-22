@@ -5,8 +5,8 @@
 #include <functional>
 
 class Ship : public Widget {
-    int _ssize, _dx, _dy, _x0, _y0, _mx, _my;
-    bool _visible, _horizontal, _static, _follow;
+    int _ssize, _dx, _dy, _x0, _y0, _mx, _my, _shots;
+    bool _visible, _horizontal, _static, _follow, _lock;
     std::function<bool(bool,int,int,int,int)> canPlace;
     std::function<void(Ship*,bool)> placeShip;
     int calculateD();
@@ -25,6 +25,9 @@ public:
     int getPosY();
     int getMx();
     int getMy();
+    bool isDead();
+    void hit();
+    void absReset();
 };
 
 

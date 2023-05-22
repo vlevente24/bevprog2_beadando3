@@ -5,6 +5,12 @@ using namespace genv;
 Application::Application(genv::color background_color, int width, int height) : _bckgrnd_clr(background_color),
                         _window_width(width), _window_height(height) {}
 
+Application::~Application() {
+    for (Widget * w : _widgets) {
+        delete w;
+    }
+}
+
 void Application::event_loop() {
     event ev;
     while (gin >> ev and ev.keycode != key_escape) {

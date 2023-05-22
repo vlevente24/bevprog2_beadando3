@@ -4,15 +4,26 @@
 // coordinating the whole game, without drawing
 
 #include <functional>
+#include <vector>
 #include "field.hpp"
 #include "bomb.hpp"
+#include "textbox.hpp"
 
 class GameMaster {
+    bool isPlayer1;
     int * status;
-    std::function<void(int, int)> _f;
+    Bomb * _bomb;
+    TextBox * _tb1;
+    TextBox * _tb2;
+    std::vector<std::vector<Field*>> _plr1f;
+    std::vector<std::vector<Field*>> _plr2f;
+    std::function<void()> _f;
+    std::function<void(bool)> _win;
 public:
-    GameMaster(int * st, std::function<void(int, int)> f);
-    void fieldClick(int x, int y);
+    GameMaster(int * st, Bomb*, TextBox*, TextBox*, std::vector<std::vector<Field*>> p1f, std::vector<std::vector<Field*>>p2f,
+               std::function<void()> f, std::function<void(bool)> win);
+    void fieldClick(Field*);
+    void fieldClick2();
 };
 
 

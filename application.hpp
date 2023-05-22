@@ -13,6 +13,7 @@ protected:
     int _window_width, _window_height;
 public:
     Application(genv::color background_color, int width, int height);
+    virtual ~Application();
     void event_loop();
     void register_widget(Widget*);
     virtual void action(genv::event) = 0;

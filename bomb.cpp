@@ -1,6 +1,4 @@
 #include "bomb.hpp"
-#include <cmath>
-#include <iostream>
 
 using namespace genv;
 using namespace std;
@@ -24,7 +22,7 @@ void Bomb::print(bool b) const {
     }
 }
 
-bool Bomb::is_selected(int, int) {cout<<_play<<endl;return _play;}
+bool Bomb::is_selected(int, int) {return _play;}
 
 void Bomb::handle(genv::event ev) {
     if (_play) {

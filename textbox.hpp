@@ -9,7 +9,7 @@ protected:
     const std::string _text;
     const std::string _fontfile;
     const unsigned short _fontsize;
-    bool _sign;
+    bool _sign, _visible;
     const genv::color bckgrndColor1;
     const genv::color txtColor1;
 public:
@@ -21,6 +21,7 @@ public:
     virtual void handle(genv::event ev) override;
     virtual void reset() override;
     virtual void changeSign(bool);
+    virtual void setVisibility(bool);
 };
 
 #endif
